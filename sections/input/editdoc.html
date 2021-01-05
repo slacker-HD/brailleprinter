@@ -1,0 +1,89 @@
+<template class="task-template">
+  <section id="editdoc-section" class="section js-section u-category-input">
+    <header class="section-header">
+      <div class="section-wrapper">
+        <h1>
+          <svg class="section-icon">
+            <use xlink:href="assets/img/icons.svg#icon-windows"></use>
+          </svg>
+          盲文编辑         
+        </h1>
+        <h3>在此对输入的文档进行编辑。</h3>
+        <p>由于汉字的多音字系统，请在此仔细校对。单击汉字选择正确的读音，系统将自动转换为对应的布莱叶盲文。</p>
+      </div>
+    </header>
+    <div class="program">
+
+
+  <div class="program-wrapper">
+        <button class="js-container-target program-toggle-button">语言朗读
+          <div class="program-meta u-avoid-clicks" >利用百度tts技术，在此将下面显示的文字转化为语音，此功能要求联网。</div>
+        </button>
+        <div class="program-box">
+          <div class="program-controls">
+            <div id="div_audio" class="center" width="600px" >
+              <audio id="tts_autio_id" controls  class="audio">
+                <source id="tts_source_id" src="" type="audio/mpeg">
+              </audio>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="program-wrapper">
+        <button class="js-container-target program-toggle-button">在此校对
+          <div class="program-meta u-avoid-clicks" >请在下面校对文字,点击文字选择正确的读音。受转化和显示速度的影响，此处每页最多显示400个字符。</div>
+        </button>
+        <div class="program-box">
+          <div class="program-controls">
+              <div id="txtedit" class="textareapreview" contenteditable="false"><br /></div>
+          </div>
+          <div class="wrapper" width ="200px">  
+              <button class="paginate left" id="btnleft" ><i></i><i></i></button>
+              <div class="counter" color ="hsl(116, 30%, 36%)"></div>
+              <button data-tooltip="btnright" class="paginate right" id="btnright"><i></i><i></i></button>
+           </div>
+
+           <div class="center">
+            <table class="configtable">
+                <tr>
+                    <th>打印选项</th>
+                    <th>选择项</th>
+                    <th rowspan="3">
+                      <div class="rainbow-button-wrapper">
+                        <button id="startprint" class="about-button modal-hide">开始打印</button>
+                      </div>
+                    </th>
+                </tr>
+                <tr>
+                    <td>打印机端口</td>
+                    <td>
+                      <select class="program-select" id="portsetting" name="producttype">
+                        <option value="COM1" selected="selected">COM1</option>
+                        <option value="COM2">COM2</option>
+                      </select>
+                    </td>
+                    
+                </tr>
+                <tr>
+                    <td>页面设置</td>
+                    <td>
+                        <select class="program-select" id="pagesetting" name="market">
+                          <option value="A4">A4</option>
+                          <option value="B4" selected="selected">B4</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            
+          </div>
+        </div>
+
+        
+      </div>
+    </div>
+    <script type="text/javascript">
+      require('./renderer-process/input/editdoc')
+    </script>
+  </section>
+</template>

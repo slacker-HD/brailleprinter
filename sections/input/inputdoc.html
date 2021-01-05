@@ -1,0 +1,42 @@
+<template class="task-template">
+  <section id="inputdoc-section" class="section js-section u-category-input">
+    <header class="section-header">
+      <div class="section-wrapper">
+        <h1>
+          <svg class="section-icon">
+            <use xlink:href="assets/img/icons.svg#icon-windows"></use>
+          </svg>
+          文档编辑
+        </h1>
+        <h3>在此输入要打印的文字并查看。</h3>
+        <p>由于汉字的多音字系统，部分文字无法正确转化，请在校对编辑栏中处理。</p>
+      </div>
+    </header>
+    <div class="program">
+      <div class="program-wrapper">
+        <button class="js-container-target program-toggle-button">输入文字
+          <div class="program-meta u-avoid-clicks">请在下面的输入框中输入文字</div>
+        </button>
+        <div class="program-box">
+          <div class="program-controls">
+              <textarea id="txtinput" class="textareainput"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="program-wrapper">
+        <button class="js-container-target program-toggle-button">快速预览
+          <div class="program-meta u-avoid-clicks">以下显示快速转化的盲文。受转化和现实速度的影响，此处未做多音字识别并只显示输入的最后200个字符。</div>
+        </button>
+        <div class="program-box">
+          <div class="program-controls">
+            <div id="txtoutput" class="textareapreview" contenteditable="false"><br /></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      require('./renderer-process/input/inputdoc')
+    </script>
+  </section>
+</template>

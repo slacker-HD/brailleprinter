@@ -1,0 +1,73 @@
+<template class="task-template">
+  <section id="print-section" class="section js-section u-category-print">
+    <header class="section-header">
+      <div class="section-wrapper">
+        <h1>
+          <svg class="section-icon">
+            <use xlink:href="assets/img/icons.svg#icon-windows"></use>
+          </svg>
+          打印文档
+        </h1>
+        <h3>连接好打印机，在此进行打印。</h3>
+        <p>请按照提示选择对应的操作。</p>
+      </div>
+    </header>
+    <div class="program">
+      <div class="program-wrapper">
+        <button class="js-container-target program-toggle-button">选项设置
+          <div class="program-meta u-avoid-clicks">请在下面的输入框中选择</div>
+        </button>
+        <div class="program-box">
+          <div class="program-controls">
+            <div class="center">
+              <table class="configtable">
+                  <tr>
+                      <th>打印选项</th>
+                      <th>选择项</th>
+                      <th rowspan="3">
+                        <div class="rainbow-button-wrapper">
+                          <button id="startprint" class="about-button modal-hide">开始打印</button>
+                        </div>
+                      </th>
+                  </tr>
+                  <tr>
+                      <td>打印机端口</td>
+                      <td>
+                        <select class="program-select" id="portsetting" name="producttype">
+                          <option value="COM1" selected="selected">COM1</option>
+                          <option value="COM2">COM2</option>
+                        </select>
+                      </td>
+                      
+                  </tr>
+                  <tr>
+                      <td>页面设置</td>
+                      <td>
+                          <select class="program-select" id="pagesetting" name="market">
+                            <option value="A4">A4</option>
+                            <option value="B4" selected="selected">B4</option>
+                          </select>
+                      </td>
+                  </tr>
+              </table>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="program-wrapper">
+        <button class="js-container-target program-toggle-button">打印进度
+          <div class="program-meta u-avoid-clicks">在此查看打印进度。</div>
+        </button>
+        <div class="program-box">
+          <div class="program-controls">
+            <div id="textareaprintpreview" class="textareapreview" contenteditable="false"><br /></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+       require('./renderer-process/print/print')
+    </script>
+  </section>
+</template>
