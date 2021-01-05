@@ -4,10 +4,10 @@ const electron = require('electron');
 const ipc = require('electron').ipcMain;
 const BrowserWindow = electron.BrowserWindow;
 const app = electron.app;
-const brailleUtil = require('./main-process/brailleUtil');
-const pinyinUtil = require('./main-process/pinyinUtil');
-const funcs = require('./main-process/funcs');
-const pinyin_dict_withtone = require('./main-process/dict/pinyin_dict_withtone');
+const brailleUtil = require('./brailleUtil');
+const pinyinUtil = require('./pinyinUtil');
+const funcs = require('./funcs');
+const pinyin_dict_withtone = require('./dict/pinyin_dict_withtone');
 
 var mainWindow = null;
 
@@ -36,7 +36,7 @@ function initialize() {
         }
 
         mainWindow = new BrowserWindow(windowOptions);
-        mainWindow.loadURL(path.join('file://', __dirname, '/index.html'));
+        mainWindow.loadURL(path.join('file://', __dirname, '../index.html'));
         mainWindow.setMenu(null);
         global.mainWindow = mainWindow;
         mainWindow.on('closed', function () {

@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "description": "App for braille printer",
   "private": true,
-  "main": "main.js",
+  "main": "./main-process/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
