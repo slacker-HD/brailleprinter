@@ -13,7 +13,6 @@
     "pack-linux": "electron-packager . --asar --asar-unpack=protocol-link.html --overwrite --platform=linux --arch=x64 --icon=assets/app-icon/png/64.png --prune=true --out=out",
     "pack-linuxarmv7": "electron-packager . --asar --asar-unpack=protocol-link.html --overwrite --platform=linux --arch=armv7l --icon=assets/app-icon/png/64.png --prune=true --out=out",
     "pack-linuxarm": "electron-packager . --asar --asar-unpack=protocol-link.html --overwrite --platform=linux --arch=arm --icon=assets/app-icon/png/64.png --prune=true --out=out",
-    "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint src --color"
   },
