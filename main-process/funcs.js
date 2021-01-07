@@ -3,7 +3,7 @@
 var funcs = {
     getattrCount: function (obj) {
         var i = 0;
-        for (var j in obj) {
+        for (var j of obj) {
             console.log(j);
             i++;
         }

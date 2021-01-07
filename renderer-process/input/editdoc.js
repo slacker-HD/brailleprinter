@@ -27,7 +27,7 @@ function isChinese(c) {
     return (/[\u4e00-\u9fa5]+/).test(c) ? true : false;
 }
 
-function slide(offset) {
+function slide() {
     document.querySelector('.counter').innerHTML = (index + 1) + ' / ' + total;
     btnleft.setAttribute('data-state', index === 0 ? 'disabled' : '');
     btnright.setAttribute('data-state', index === total - 1 ? 'disabled' : '');
@@ -48,7 +48,7 @@ ipc.on('asynchronous-refreshtxtedit-reply', function (event, arg) {
         total = 1;
     }
     txtedit.innerHTML = arg[0];
-    slide(index);
+    slide();
     var tooltipelem = document.querySelectorAll('.tooltip');
     for (var i = 0; i < tooltipelem.length; i++) {
         if (isChinese(tooltipelem[i].getAttribute('data-tag'))) {

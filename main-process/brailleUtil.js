@@ -136,7 +136,7 @@ var symbol = {
     ";": ["56"],
 };
 var brailleUtil = {
-    braillestring: function(s, pinyinUtil) {
+    braillestring: function (s, pinyinUtil) {
         var result = [];
         for (var i = 0; i < s.length; i++) {
             var c = s.charAt(i);
@@ -152,7 +152,7 @@ var brailleUtil = {
                     o[c] = this.pinyintobrailles(p);
                 } else {
                     for (var sy in symbol) {
-                        if (sy == c) {
+                        if (sy === c) {
                             o[c] = symbol[sy];
                             break;
                         }
@@ -163,24 +163,26 @@ var brailleUtil = {
         }
         return (result);
     },
-    pinyintobrailles: function(pinyin) {
+    pinyintobrailles: function (pinyin) {
         var t = [];
-        for (var py in transPY1) {
-            if (pinyin.indexOf(py) == 0) {
+        var py;
+        for (py in transPY1) {
+            if (pinyin.indexOf(py) === 0) {
                 t = transPY1[py];
                 pinyin = pinyin.substr(py.length);
                 break;
             }
         }
-        if (t.length === 0)
+        if (t.length === 0) {
             t = ["23456"]; //韵母自成音节的时候，在声方需配写零声符
-        for (var py in transPY2) {
-            if (pinyin == py) {
+        }
+        for (py in transPY2) {
+            if (pinyin === py) {
                 t = t.concat(transPY2[py]);
                 break;
             }
         }
         return t;
     }
-}
+};
 module.exports = brailleUtil;

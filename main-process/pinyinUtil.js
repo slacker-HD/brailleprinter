@@ -2,13 +2,14 @@
 
    var pinyinUtil = {
        dict: {},
-       isChinese: function(c) {
+       isChinese: function (c) {
            return (/[\u4e00-\u9fa5]+/).test(c) ? true : false;
        },
-       parseDict: function(pinyin_dict_withtone) {
+       parseDict: function (pinyin_dict_withtone) {
            this.dict.withtone = {};
+           var i,len;
            var temp = pinyin_dict_withtone.split(',');
-           for (var i = 0, len = temp.length; i < len; i++) {
+           for (i = 0, len = temp.length; i < len; i++) {
                // 这段代码耗时28毫秒左右，对性能影响不大，所以一次性处理完毕
                this.dict.withtone[String.fromCharCode(i + 19968)] = temp[i]; // 这里先不进行split(' ')，因为一次性循环2万次split比较消耗性能
            }
@@ -19,7 +20,7 @@
            var py2hz = {},
                py,
                hz;
-           for (var i = 0, len = notone.length; i < len; i++) {
+           for (i = 0, len = notone.length; i < len; i++) {
                hz = String.fromCharCode(i + 19968); // 汉字
                // = aaa[i];
                py = notone[i].split(' '); // 去掉了声调的拼音数组
@@ -29,30 +30,35 @@
            }
            this.dict.py2hz = py2hz;
        },
-       getPinyin: function(chinese, withtone) {
-           if (!chinese || /^ +$/g.test(chinese)) return '';
-           withtone = withtone == undefined ? true : withtone;
+       getPinyin: function (chinese, withtone) {
+           if (!chinese || /^ +$/g.test(chinese)) {
+               return '';
+           }
+           withtone = withtone === undefined ? true : withtone;
            var result;
            var pinyin = this.dict.withtone[chinese];
            if (pinyin) {
                pinyin = pinyin.replace(/ .*$/g, ''); // 如果不需要多音字
                var tmp = pinyin.split(' ');
                pinyin = tmp[0];
-               if (!withtone)
+               if (!withtone) {
                    pinyin = this.removeTone(pinyin); // 如果不需要声调
+               }
            }
            result = pinyin || chinese;
            return result;
        },
-       getMultiPinyin: function(chinese) {
-           if (!chinese || /^ +$/g.test(chinese)) return '';
+       getMultiPinyin: function (chinese) {
+           if (!chinese || /^ +$/g.test(chinese)) {
+               return '';
+           }
            var result;
            var pinyin = this.dict.withtone[chinese];
            result = pinyin || chinese;
            result = result.split(" ");
            return result;
        },
-       removeTone: function(pinyin) {
+       removeTone: function (pinyin) {
            var toneMap = {
                "ā": "a1",
                "á": "a2",
@@ -83,7 +89,9 @@
                "ň": "n3",
                "": "m2"
            };
-           return pinyin.replace(/[āáǎàōóǒòēéěèīíǐìūúǔùüǖǘǚǜńň]/g, function(m) { return toneMap[m][0]; });
+           return pinyin.replace(/[āáǎàōóǒòēéěèīíǐìūúǔùüǖǘǚǜńň]/g, function (m) {
+               return toneMap[m][0];
+           });
        }
    };
    module.exports = pinyinUtil;

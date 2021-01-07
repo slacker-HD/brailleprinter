@@ -18,9 +18,7 @@ var autoTextarea = function (elem, extra, maxHeight) {
     var isFirefox = !!document.getBoxObjectFor || 'mozInnerScreenX' in window,
         isOpera = !!window.opera && !!window.opera.toString().indexOf('Opera'),
         addEvent = function (type, callback) {
-            elem.addEventListener ?
-                elem.addEventListener(type, callback, false) :
-                elem.attachEvent('on' + type, callback);
+            elem.addEventListener ? elem.addEventListener(type, callback, false) : elem.attachEvent('on' + type, callback);
         },
         getStyle = elem.currentStyle ? function (name) {
             var val = elem.currentStyle[name];
@@ -50,7 +48,7 @@ var autoTextarea = function (elem, extra, maxHeight) {
 
         if (!isFirefox && !isOpera) {
             padding = parseInt(getStyle('paddingTop')) + parseInt(getStyle('paddingBottom'));
-        };
+        }
         scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
 
         elem.style.height = minHeight + 'px';
@@ -61,7 +59,7 @@ var autoTextarea = function (elem, extra, maxHeight) {
             } else {
                 height = elem.scrollHeight - padding;
                 style.overflowY = 'hidden';
-            };
+            }
             style.height = height + extra + 'px';
             scrollTop += parseInt(style.height) - elem.currHeight;
             document.body.scrollTop = scrollTop;
