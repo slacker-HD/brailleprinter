@@ -68,7 +68,6 @@ function initialize() {
 }
 
 const gotTheLock = app.requestSingleInstanceLock();
-
 if (!gotTheLock) {
     app.quit();
 } else {
@@ -85,7 +84,6 @@ if (!gotTheLock) {
 }
 
 initialize();
-
 
 function rightsubstring(str, length) {
     var text = str.length > length ? str.substr(str.length - length, length) : str;
@@ -113,7 +111,6 @@ ipc.on('asynchronous-changepinyin', function (event, arg) {
     var content = brailleUtil.pinyintobrailles(pinyinUtil.removeTone(arg[1]));
     (global.braille[index])[global.data[index]] = content;
 });
-
 
 ipc.on('synchronous-gettooltips', function (event, arg) {
     var html = "";
