@@ -2,7 +2,6 @@
 
    var pinyinUtil = {
        dict: {},
-
        isChinese: function(c) {
            return (/[\u4e00-\u9fa5]+/).test(c) ? true : false;
        },
@@ -45,7 +44,6 @@
            result = pinyin || chinese;
            return result;
        },
-
        getMultiPinyin: function(chinese) {
            if (!chinese || /^ +$/g.test(chinese)) return '';
            var result;
@@ -87,5 +85,5 @@
            };
            return pinyin.replace(/[āáǎàōóǒòēéěèīíǐìūúǔùüǖǘǚǜńň]/g, function(m) { return toneMap[m][0]; });
        }
-   }
+   };
    module.exports = pinyinUtil;
