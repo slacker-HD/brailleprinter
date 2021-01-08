@@ -4,7 +4,7 @@ const txtinput = document.getElementById('txtinput');
 const txtoutput = document.getElementById('txtoutput');
 
 txtinput.addEventListener('keyup', function () {
-    var arg = [txtinput.value];
+    var arg = txtinput.value;
     ipc.send('asynchronous-sendtextfastpreview', arg);
     autoTextarea(txtinput);
 });

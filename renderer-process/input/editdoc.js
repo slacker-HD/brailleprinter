@@ -36,12 +36,19 @@ function slide() {
 editdoc_section.addEventListener('editdoc_section_load', function () {
     index = 0;
     ipc.send('asynchronous-inittxtedit', []);
-    ipc.send('asynchronous-refreshtxtedit', [0]);
+    ipc.send('asynchronous-refreshtxtedit', 0);
 });
 
 ipc.on('asynchronous-refreshtxtedit-reply', function (event, arg) {
-    var data = require('electron').remote.getGlobal('data').slice(index * 400, index * 400 + 400);
+    //var data = require('electron').remote.getGlobal('data').slice(index * 400, index * 400 + 400);
+    var data;
 
+    if (index === 0) {
+        data = require('electron').remote.getGlobal('data').slice(0, require('electron').remote.getGlobal('pagesepnums')[index]);
+    }
+    else {
+        data = require('electron').remote.getGlobal('data').slice(require('electron').remote.getGlobal('pagesepnums')[index - 1], require('electron').remote.getGlobal('pagesepnums')[index]);
+    }
     GetTTS(data);
     total = arg[1];
     if (total === 0) {
@@ -59,8 +66,9 @@ ipc.on('asynchronous-refreshtxtedit-reply', function (event, arg) {
                     var pinyinelem = document.querySelectorAll('.pinyin');
                     for (var k = 0; k < pinyinelem.length; k++) {
                         pinyinelem[k].addEventListener('click', function () {
-                            ipc.send('asynchronous-changepinyin', [index * 400 + parseInt(this.getAttribute('data-id')), this.getAttribute('data-pinyin')]);
-                            ipc.send('asynchronous-refreshtxtedit', [index]);
+                            var indx = index === 0 ? parseInt(this.getAttribute('data-id')) : require('electron').remote.getGlobal('pagesepnums')[index - 1] + parseInt(this.getAttribute('data-id'));
+                            ipc.send('asynchronous-changepinyin', [indx, this.getAttribute('data-pinyin')]);
+                            ipc.send('asynchronous-refreshtxtedit', index);
                         });
                     }
                 }, 50);
@@ -72,11 +80,11 @@ ipc.on('asynchronous-refreshtxtedit-reply', function (event, arg) {
 btnleft.addEventListener('click', function () {
     index--;
     index = index < 0 ? 0 : index;
-    ipc.send('asynchronous-refreshtxtedit', [index]);
+    ipc.send('asynchronous-refreshtxtedit', index);
 });
 
 btnright.addEventListener('click', function () {
     index++;
     index = index < total - 1 ? index : total - 1;
-    ipc.send('asynchronous-refreshtxtedit', [index]);
+    ipc.send('asynchronous-refreshtxtedit', index);
 });

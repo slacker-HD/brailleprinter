@@ -15,15 +15,16 @@ function initialize() {
     pinyinUtil.parseDict(pinyin_dict_withtone);
     global.data = "";
     global.braille = [];
-
+    global.row = 40;
+    global.col = 100;
     app.name = '布莱叶盲文打印编辑系统';
 
     function createWindow() {
         var windowOptions = {
-            width: 1080,
+            width: 1024,
             minWidth: 980,
-            height: 840,
-            minHeight: 600,
+            height: 600,
+            minHeight: 480,
             title: app.name,
             webPreferences: {
                 nodeIntegration: true,
@@ -90,32 +91,43 @@ function rightsubstring(str, length) {
     return text;
 }
 
+//传入参数arg为输入文本，一个string值
 ipc.on('asynchronous-sendtextfastpreview', function (event, arg) {
-    global.data = arg[0];
-    var text = rightsubstring(arg[0], 200);
+    global.data = arg;
+    var text = rightsubstring(arg, 200);
     event.sender.send('asynchronous-sendtextfastpreview-reply', funcs.ResultString(brailleUtil.braillestring(text, pinyinUtil), false));
 });
 
 ipc.on('asynchronous-inittxtedit', function () {
     global.braille = brailleUtil.braillestring(global.data, pinyinUtil);
+    var tmp = funcs.Paging(global.row, global.col);
+    global.pages = tmp[0];
+    global.pagesepnums = tmp[1];
 });
 
+//传入参数arg为当前页面，一个int值
 ipc.on('asynchronous-refreshtxtedit', function (event, arg) {
-    var length = global.data.length % 400 === 0 ? parseInt(global.data.length / 400) : parseInt(global.data.length / 400 + 1);
-    var data = global.braille.slice(arg[0] * 400, arg[0] * 400 + 400);
-
-
-    var aa = funcs.Paging(3,10);
-    console.log(aa);
+    // var length = global.data.length % 400 === 0 ? parseInt(global.data.length / 400) : parseInt(global.data.length / 400 + 1);
+    // var data = global.braille.slice(arg * 400, arg * 400 + 400);
+    var length = global.pages;
+    var data;
+    if (arg === 0) {
+        data = global.braille.slice(0, global.pagesepnums[arg]);
+    }
+    else {
+        data = global.braille.slice(global.pagesepnums[arg - 1], global.pagesepnums[arg]);
+    }
     event.sender.send('asynchronous-refreshtxtedit-reply', [funcs.ResultString(data, true), length]);
 });
 
+//传入参数arg为当前文字的值和所在页面的第几个字，数组类型[int,string]
 ipc.on('asynchronous-changepinyin', function (event, arg) {
     var index = arg[0];
     var content = brailleUtil.pinyintobrailles(pinyinUtil.removeTone(arg[1]));
     (global.braille[index])[global.data[index]] = content;
 });
 
+//传入参数arg为当前文字的值和所在页面的第几个字，数组类型[int,string]
 ipc.on('synchronous-gettooltips', function (event, arg) {
     var html = "";
     var strs = pinyinUtil.getMultiPinyin(arg[0]);

@@ -107,14 +107,15 @@ var funcs = {
                 }
             }
             if (global.data[i] === '\n') {
-                currentcol = collength;
+                //一行最后一个回车注意不要多次换行
+                currentcol = currentcol === 0 ? 0 : collength;
             }
             else {
                 //打完字空一个
                 currentcol += global.braille[i][global.data[i]].length * 2 + 1;
             }
         }
-        return [pages,pagesepnums];
+        return [pages, pagesepnums];
     }
 };
 module.exports = funcs;
