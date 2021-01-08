@@ -87,6 +87,34 @@ var funcs = {
 
         }
         return html;
+    },
+    //打印的时候字间空半格，一个英文字符一格，中文两格
+    Paging: function (rowlength, collength) {
+        var pages = 1;//页数
+        var pagesepnums = [];//分页的终点标识
+        var currentcol = 0, currentrow = 1;
+        for (var i = 0; i < global.data.length; i++) {
+            //判断是否该换行了
+            if (currentcol + global.braille[i][global.data[i]].length * 2 > collength) {
+                currentrow++;
+                currentcol = 0;
+                //判断是否该分页了
+                if (currentrow > rowlength) {
+                    pages++;
+                    pagesepnums[pagesepnums.length] = i;
+                    //重置新页
+                    currentrow = 1;
+                }
+            }
+            if (global.data[i] === '\n') {
+                currentcol = collength;
+            }
+            else {
+                //打完字空一个
+                currentcol += global.braille[i][global.data[i]].length * 2 + 1;
+            }
+        }
+        return [pages,pagesepnums];
     }
 };
 module.exports = funcs;

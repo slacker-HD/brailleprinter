@@ -103,6 +103,10 @@ ipc.on('asynchronous-inittxtedit', function () {
 ipc.on('asynchronous-refreshtxtedit', function (event, arg) {
     var length = global.data.length % 400 === 0 ? parseInt(global.data.length / 400) : parseInt(global.data.length / 400 + 1);
     var data = global.braille.slice(arg[0] * 400, arg[0] * 400 + 400);
+
+
+    var aa = funcs.Paging(3,10);
+    console.log(aa);
     event.sender.send('asynchronous-refreshtxtedit-reply', [funcs.ResultString(data, true), length]);
 });
 
