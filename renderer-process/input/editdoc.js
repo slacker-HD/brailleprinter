@@ -40,9 +40,7 @@ editdoc_section.addEventListener('editdoc_section_load', function () {
 });
 
 ipc.on('asynchronous-refreshtxtedit-reply', function (event, arg) {
-    //var data = require('electron').remote.getGlobal('data').slice(index * 400, index * 400 + 400);
     var data;
-
     if (index === 0) {
         data = require('electron').remote.getGlobal('data').slice(0, require('electron').remote.getGlobal('pagesepnums')[index]);
     }

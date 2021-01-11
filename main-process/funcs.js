@@ -13,7 +13,7 @@ var funcs = {
         var html = '';
         for (var i in obj) {
             if (i === "\n") {
-                html += "<br />";
+                continue;
             } else {
                 var str = obj[i];
                 var line1 = "",
@@ -80,11 +80,26 @@ var funcs = {
         array[i] = (192);
         return array;
     },
-    ResultString: function (arg, editable) {
+    //快速预览字符串,参数为输入的文字对象
+    PreviewString: function (arg) {
         var html = "";
         for (var i = 0; i < arg.length; i++) {
-            html += editable === true ? this.gettextEdit(arg[i], i) : this.gettext(arg[i]);
-
+            html += this.gettext(arg[i]);
+        }
+        return html;
+    },
+    //编辑打印的字符串
+    EditString: function (data, collength, start) {
+        var html = "";
+        var rows = this.Rowing(data, collength, start);
+        for (var i = 0; i < data.length; i++) {
+            if (rows.length > 0) {
+                if (i === rows[0]) {
+                    html += "<br />";
+                    rows.shift();
+                }
+            }
+            html += this.gettextEdit(data[i], i);
         }
         return html;
     },
@@ -116,6 +131,27 @@ var funcs = {
             }
         }
         return [pages, pagesepnums];
+    },
+    Rowing: function (data, collength, start) {
+        var currentcol = 0;
+        var rowsepnums = [];//分行的终点标识
+
+        for (var i = 0; i < data.length; i++) {
+            if (currentcol + global.braille[i + start][global.data[i + start]].length * 2 > collength) {
+                currentcol = 0;
+                rowsepnums[rowsepnums.length] = i;
+            }
+            if (global.data[i + start] === '\n') {
+                //一行最后一个回车注意不要多次换行
+                currentcol = currentcol === 0 ? 0 : collength;
+            }
+            else {
+                //打完字空一个
+                currentcol += global.braille[i + start][global.data[i + start]].length * 2 + 1;
+            }
+        }
+        return rowsepnums;
     }
+
 };
 module.exports = funcs;

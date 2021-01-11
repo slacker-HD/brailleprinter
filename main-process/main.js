@@ -15,8 +15,8 @@ function initialize() {
     pinyinUtil.parseDict(pinyin_dict_withtone);
     global.data = "";
     global.braille = [];
-    global.row = 40;
-    global.col = 100;
+    global.row = 3;
+    global.col = 10;
     app.name = '布莱叶盲文打印编辑系统';
 
     function createWindow() {
@@ -95,7 +95,7 @@ function rightsubstring(str, length) {
 ipc.on('asynchronous-sendtextfastpreview', function (event, arg) {
     global.data = arg;
     var text = rightsubstring(arg, 200);
-    event.sender.send('asynchronous-sendtextfastpreview-reply', funcs.ResultString(brailleUtil.braillestring(text, pinyinUtil), false));
+    event.sender.send('asynchronous-sendtextfastpreview-reply', funcs.PreviewString(brailleUtil.braillestring(text, pinyinUtil)));
 });
 
 ipc.on('asynchronous-inittxtedit', function () {
@@ -107,17 +107,11 @@ ipc.on('asynchronous-inittxtedit', function () {
 
 //传入参数arg为当前页面，一个int值
 ipc.on('asynchronous-refreshtxtedit', function (event, arg) {
-    // var length = global.data.length % 400 === 0 ? parseInt(global.data.length / 400) : parseInt(global.data.length / 400 + 1);
-    // var data = global.braille.slice(arg * 400, arg * 400 + 400);
     var length = global.pages;
     var data;
-    if (arg === 0) {
-        data = global.braille.slice(0, global.pagesepnums[arg]);
-    }
-    else {
-        data = global.braille.slice(global.pagesepnums[arg - 1], global.pagesepnums[arg]);
-    }
-    event.sender.send('asynchronous-refreshtxtedit-reply', [funcs.ResultString(data, true), length]);
+    var start = arg === 0 ? 0 : global.pagesepnums[arg - 1];
+    data = global.braille.slice(start, global.pagesepnums[arg]);
+    event.sender.send('asynchronous-refreshtxtedit-reply', [funcs.EditString(data, global.col, start), length]);
 });
 
 //传入参数arg为当前文字的值和所在页面的第几个字，数组类型[int,string]
