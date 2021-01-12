@@ -15,7 +15,7 @@
     "pack-linuxarm": "electron-packager . --asar --asar-unpack=protocol-link.html --overwrite --platform=linux --arch=arm --icon=assets/app-icon/png/64.png --prune=true --out=out",
     "publish": "electron-forge publish",
     "lint": "eslint src --color",
-    "debarmhf": "electron-installer-debian --src out/AirControl-linux-armv7l/ --dest out/installers/ --arch armhf --config assets/config.json"
+    "debarmhf": "electron-installer-debian --src out/brailleprinter-linux-armv7l/ --dest out/installers/ --arch armhf --config assets/config.json"
   },
   "keywords": [],
   "author": "hudi",
