@@ -47,7 +47,7 @@ ipc.on('asynchronous-refreshtxtedit-reply', function (event, arg) {
     else {
         data = require('electron').remote.getGlobal('data').slice(require('electron').remote.getGlobal('pagesepnums')[index - 1], require('electron').remote.getGlobal('pagesepnums')[index]);
     }
-    GetTTS(data);
+    GetTTS(require('electron').remote.getGlobal('data'));
     total = arg[1];
     if (total === 0) {
         total = 1;
