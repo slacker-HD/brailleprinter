@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <string.h>
+
 #ifdef __APPLE__
 #include <sys/uio.h>
 #else
@@ -32,8 +34,9 @@ int main(int argc, char *argv[])
     {
         printf("input line %d:",i);
         i++;
-        fgets(line, 1000, fp);
+        fgets(line, 24, fp);
         printf("%s", line);
+        printf("   %d\n", strlen(line));
     }
     fclose(fp);
     return 0;
