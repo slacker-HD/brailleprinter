@@ -3,15 +3,18 @@
 #include <sys/uio.h>
 #else
 #include <sys/io.h>
+#include <wiringSerial.h>
+#include <wiringPi.h>
 #endif
-// #include < wiringSerial.h>
-// #include <wiringPi.h>
 
 int main(int argc, char *argv[])
 {
     FILE *fp;
-    char line[50];
-    // wiringPiSetup();
+    char line[24]; //应该最多只有12个的，乘以2以备以后扩展
+    int i = 1;
+#ifdef __linux
+    wiringPiSetup();
+#endif
 
     if (argc != 2)
     {
@@ -24,9 +27,11 @@ int main(int argc, char *argv[])
         printf("Can not load the print file.");
         return -1;
     }
+
     while (!feof(fp))
     {
-        printf("input line:");
+        printf("input line %d:",i);
+        i++;
         fgets(line, 1000, fp);
         printf("%s", line);
     }
