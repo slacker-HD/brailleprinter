@@ -66,19 +66,27 @@ var funcs = {
         }
         return html;
     },
-    getprintcode: function (brailleString) {
-        var array = new Uint8Array(brailleString.length + 1);
-        var i = 0;
-        for (i = 0; i < brailleString.length; i++) {
-            var x = ['0', '0', '0', '0', '0', '0', '0', '0'];
-            var s = brailleString[i];
-            for (var j = 0; j < s.length; j++) {
-                x[8 - parseInt(s[j])] = "1";
+    getprintcode: function (obj, index) {
+        var txt = '';
+        for (var i in obj) {
+            if (i === "\n") {
+                continue;
+            } else {
+                var str = obj[i];
+                var count = this.getattrCount(str);
+                var line = "";
+                for (var j = 0; j < count; j++) {
+                    line += (str[j].indexOf("1") >= 0) ? "1" : "0";
+                    line += (str[j].indexOf("2") >= 0) ? "1" : "0";
+                    line += (str[j].indexOf("3") >= 0) ? "1" : "0";
+                    line += (str[j].indexOf("4") >= 0) ? "1" : "0";
+                    line += (str[j].indexOf("5") >= 0) ? "1" : "0";
+                    line += (str[j].indexOf("6") >= 0) ? "1" : "0";
+                }
+                txt += line + '\n';
             }
-            array[i] = (parseInt(x.join(''), 2));
         }
-        array[i] = (192);
-        return array;
+        return txt;
     },
     //快速预览字符串,参数为输入的文字对象
     PreviewString: function (arg) {
@@ -102,6 +110,21 @@ var funcs = {
             html += this.gettextEdit(data[i], i);
         }
         return html;
+    },
+    //生成用于打印的txt字符串
+    PrintCode: function (data, collength, start) {
+        var txt = "";
+        var rows = this.Rowing(data, collength, start);
+        for (var i = 0; i < data.length; i++) {
+            if (rows.length > 0) {
+                if (i === rows[0]) {
+                    txt += "BR\n";
+                    rows.shift();
+                }
+            }
+            txt += this.getprintcode(data[i], i);
+        }
+        return txt;
     },
     //打印的时候字间空半格，一个英文字符一格，中文两格
     Paging: function (rowlength, collength) {
@@ -130,6 +153,7 @@ var funcs = {
                 currentcol += global.braille[i][global.data[i]].length * 2 + 1;
             }
         }
+        pagesepnums[pages - 1] = global.data.length;
         return [pages, pagesepnums];
     },
     Rowing: function (data, collength, start) {

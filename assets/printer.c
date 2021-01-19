@@ -1,13 +1,17 @@
 #include <stdio.h>
+#ifdef __APPLE__
+#include <sys/uio.h>
+#else
 #include <sys/io.h>
-#include <wiringSerial.h>
-#include <wiringPi.h>
+#endif
+// #include < wiringSerial.h>
+// #include <wiringPi.h>
 
 int main(int argc, char *argv[])
 {
     FILE *fp;
     char line[50];
-    wiringPiSetup();
+    // wiringPiSetup();
 
     if (argc != 2)
     {

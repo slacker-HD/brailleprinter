@@ -8,6 +8,7 @@ const brailleUtil = require('./brailleUtil');
 const pinyinUtil = require('./pinyinUtil');
 const funcs = require('./funcs');
 const pinyin_dict_withtone = require('./dict/pinyin_dict_withtone');
+const fs = require('fs');
 
 var mainWindow = null;
 
@@ -146,4 +147,23 @@ ipc.on('synchronous-gettooltips', function (event, arg) {
         html += line3 + '</td></tr></table>';
     }
     event.returnValue = html;
+});
+
+function WritePrintFile(Filename, Content) {
+    fs.writeFileSync(Filename, Content, function (err) {
+        if (err) {
+            return -1;
+        }
+        console.log("The file was saved!");
+        return 0;
+    });
+}
+
+//生成打印文件，传入当前页面，从0开始
+ipc.on('asynchronous-generateprinttxt', function (event, arg) {
+    var data;
+    var start = arg === 0 ? 0 : global.pagesepnums[arg - 1];
+    data = global.braille.slice(start, global.pagesepnums[arg]);
+    var Content = funcs.PrintCode(data, global.col, start);
+    WritePrintFile("a.txt", Content);
 });

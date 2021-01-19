@@ -5,6 +5,8 @@ const editdoc_section = document.getElementById('editdoc-section');
 const btnleft = document.getElementById('btnleft');
 const btnright = document.getElementById('btnright');
 const ttsDiv = document.getElementById('div_audio');
+const startprint = document.getElementById('startprint');
+
 
 var index = 0,
     total = 0;
@@ -40,13 +42,6 @@ editdoc_section.addEventListener('editdoc_section_load', function () {
 });
 
 ipc.on('asynchronous-refreshtxtedit-reply', function (event, arg) {
-    var data;
-    if (index === 0) {
-        data = require('electron').remote.getGlobal('data').slice(0, require('electron').remote.getGlobal('pagesepnums')[index]);
-    }
-    else {
-        data = require('electron').remote.getGlobal('data').slice(require('electron').remote.getGlobal('pagesepnums')[index - 1], require('electron').remote.getGlobal('pagesepnums')[index]);
-    }
     GetTTS(require('electron').remote.getGlobal('data'));
     total = arg[1];
     if (total === 0) {
@@ -85,4 +80,8 @@ btnright.addEventListener('click', function () {
     index++;
     index = index < total - 1 ? index : total - 1;
     ipc.send('asynchronous-refreshtxtedit', index);
+});
+
+startprint.addEventListener('click', function () {
+    ipc.send('asynchronous-generateprinttxt', index);
 });
