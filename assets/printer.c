@@ -32,11 +32,18 @@ int main(int argc, char *argv[])
 
     while (!feof(fp))
     {
-        printf("input line %d:",i);
+        printf("input line %d:", i);
         i++;
         fgets(line, 24, fp);
-        printf("%s", line);
-        printf("   %d\n", strlen(line));
+        if (strcmp(line, "BR\n") == 0)
+        {
+            printf("new line\n");
+        }
+        else
+        {
+            printf("%s", line);
+            printf("   %lu\n", strlen(line));
+        }
     }
     fclose(fp);
     return 0;

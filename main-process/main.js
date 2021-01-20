@@ -8,6 +8,7 @@ const brailleUtil = require('./brailleUtil');
 const pinyinUtil = require('./pinyinUtil');
 const funcs = require('./funcs');
 const pinyin_dict_withtone = require('./dict/pinyin_dict_withtone');
+const os = require('os');
 const fs = require('fs');
 
 var mainWindow = null;
@@ -164,6 +165,12 @@ ipc.on('asynchronous-generateprinttxt', function (event, arg) {
     var data;
     var start = arg === 0 ? 0 : global.pagesepnums[arg - 1];
     data = global.braille.slice(start, global.pagesepnums[arg]);
-    var Content = funcs.PrintCode(data, global.col, start);
-    WritePrintFile("a.txt", Content);
+    var content = funcs.PrintCode(data, global.col, start);
+
+    var curdate = new Date();
+
+
+    // WritePrintFile("a.txt", content);
+    WritePrintFile(os.tmpdir() + "/Braille " + curdate + ".txt", content);
+
 });
