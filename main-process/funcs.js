@@ -66,7 +66,7 @@ var funcs = {
         }
         return html;
     },
-    getprintcode: function (obj, index) {
+    getprintcode: function (obj) {
         var txt = '';
         for (var i in obj) {
             if (i === "\n") {
@@ -122,7 +122,7 @@ var funcs = {
                     rows.shift();
                 }
             }
-            txt += this.getprintcode(data[i], i);
+            txt += this.getprintcode(data[i]);
         }
         return txt;
     },

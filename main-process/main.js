@@ -10,6 +10,7 @@ const funcs = require('./funcs');
 const pinyin_dict_withtone = require('./dict/pinyin_dict_withtone');
 const os = require('os');
 const fs = require('fs');
+
 const {
     execFile
 } = require('child_process');
@@ -20,6 +21,7 @@ function initialize() {
     pinyinUtil.parseDict(pinyin_dict_withtone);
     global.data = "";
     global.braille = [];
+    //这里初始化设置默认打印行和列
     global.row = 3;
     global.col = 10;
     app.name = '布莱叶盲文打印编辑系统';
@@ -188,7 +190,7 @@ ipc.on('asynchronous-generateprinttxt', function (event, arg) {
     var content = funcs.PrintCode(data, global.col, start);
 
     var curdate = new Date();
-    var filepath = os.tmpdir() + "/Braille " + curdate + ".txt";
+    var filepath = path.join(os.tmpdir(), "/Braille " + curdate + ".txt");
 
     // WritePrintFile("a.txt", content);
     WritePrintFile(filepath, content);
