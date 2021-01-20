@@ -10,6 +10,9 @@ const funcs = require('./funcs');
 const pinyin_dict_withtone = require('./dict/pinyin_dict_withtone');
 const os = require('os');
 const fs = require('fs');
+const {
+    execFile
+} = require('child_process');
 
 var mainWindow = null;
 
@@ -160,6 +163,23 @@ function WritePrintFile(Filename, Content) {
     });
 }
 
+function Print(file) {
+    var exef;
+    if (fs.existsSync("./assets/a.out")) {
+        exef = "./assets/a.out";
+
+    }
+    else {
+        exef = global.data.apppath + "/../a.out";
+    }
+    const print = execFile(exef, [file,], (error, stdout) => {
+        console.log(stdout);
+    });
+    print.on('exit', (code) => {
+        console.log("exit:" + code);
+    });
+}
+
 //生成打印文件，传入当前页面，从0开始
 ipc.on('asynchronous-generateprinttxt', function (event, arg) {
     var data;
@@ -168,9 +188,9 @@ ipc.on('asynchronous-generateprinttxt', function (event, arg) {
     var content = funcs.PrintCode(data, global.col, start);
 
     var curdate = new Date();
-
+    var filepath = os.tmpdir() + "/Braille " + curdate + ".txt";
 
     // WritePrintFile("a.txt", content);
-    WritePrintFile(os.tmpdir() + "/Braille " + curdate + ".txt", content);
-
+    WritePrintFile(filepath, content);
+    Print(filepath);
 });

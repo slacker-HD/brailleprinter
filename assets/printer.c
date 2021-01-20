@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
     while (!feof(fp))
     {
-        printf("input line %d:", i);
+        printf("input line %d:\n", i);
         i++;
         fgets(line, 24, fp);
         if (strcmp(line, "BR\n") == 0)
@@ -41,8 +41,8 @@ int main(int argc, char *argv[])
         }
         else
         {
-            printf("%s", line);
-            printf("   %lu\n", strlen(line));
+            printf("line length:%lu\n", strlen(line));
+            printf("line contents:%s", line);
         }
     }
     fclose(fp);
