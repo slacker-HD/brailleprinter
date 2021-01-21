@@ -22,11 +22,11 @@
 #define SERVOVALUE 25   // 舵机每次转过的的角度，此数值涉及打洞的深度
 
 #ifdef __linux
-Servo _z_axis;          // 创建一个舵机控制对象
+Servo _z_axis; // 创建一个舵机控制对象
 #endif
 
-const int _step = 250;  // _step Length
-int _x_pos, _y_pos;     // 打印针头当前位置
+const int _step = 250; // _step Length
+int _x_pos, _y_pos;    // 打印针头当前位置
 
 #ifdef __linux
 //控制舵机来回一次
@@ -61,7 +61,6 @@ void xStep_forward(int Step)
     }
 }
 //控制电机行走，需要根据硬件修改
-
 void xStep_backward(int Step)
 {
     int x;
@@ -94,7 +93,6 @@ void yStep_forward(int Step)
     }
 }
 //控制电机行走，需要根据硬件修改
-
 void yStep_backward(int Step)
 {
     int x;
@@ -110,6 +108,41 @@ void yStep_backward(int Step)
         delayMicroseconds(300); // Wait 1/2 a ms
     }
 }
+//回车换行
+void Return()
+{
+    xStep_backward(_x_pos * _step);
+    _x_pos = 0;
+    yStep_forward(_step * 4);
+    _y_pos++;
+}
+//打印字符，传入长度为6的char数组，分别对应布莱叶盲文1-6
+void printchar(char c[])
+{
+    if (c[0] == 1)
+        holing();
+    y_step_forward(_step);
+    if (c[1] == 1)
+        holing();
+    y_step_forward(_step);
+    if (c[2] == 1)
+        holing();
+    x_step_forward(_step);
+    y_step_backward(_step * 2);
+    _x_pos++;
+    if (c[3] == 1)
+        holing();
+    y_step_forward(_step);
+    if (c[4] == 1)
+        holing();
+    y_step_forward(_step);
+    if (c[5] == 1)
+        holing();
+    x_step_forward(_step);
+    y_step_backward(_step * 2);
+    _x_pos++;
+}
+
 #endif
 
 int main(int argc, char *argv[])
@@ -117,7 +150,8 @@ int main(int argc, char *argv[])
     FILE *fp;
     char line[24]; //应该最多只有12个的，乘以2以备以后扩展
     int i = 1;
-
+    _x_pos = 0;
+    _y_pos = 0;
     if (argc != 2)
     {
         printf("Please input the print file path as argument.\n");
@@ -133,13 +167,13 @@ int main(int argc, char *argv[])
 #ifdef __linux
     wiringPiSetup();
     //电机1的初始化
-    pinMode(MOTOR1CTLPIN, OUTPUT);    // 电机1的控制引脚
-    pinMode(MOTOR1STEPPIN, OUTPUT);   // 电机1 _step
-    pinMode(MOTOR1DIRPIN, OUTPUT);    // 电机1转动方向
+    pinMode(MOTOR1CTLPIN, OUTPUT);  // 电机1的控制引脚
+    pinMode(MOTOR1STEPPIN, OUTPUT); // 电机1 _step
+    pinMode(MOTOR1DIRPIN, OUTPUT);  // 电机1转动方向
     //电机2的初始化
-    pinMode(MOTOR2CTLPIN, OUTPUT);    // 电机2的控制引脚
-    pinMode(MOTOR2STEPPIN, OUTPUT);   // 电机2 _step
-    pinMode(MOTOR2DIRPIN, OUTPUT);    // 电机2转动方向
+    pinMode(MOTOR2CTLPIN, OUTPUT);  // 电机2的控制引脚
+    pinMode(MOTOR2STEPPIN, OUTPUT); // 电机2 _step
+    pinMode(MOTOR2DIRPIN, OUTPUT);  // 电机2转动方向
     //舵机初始化
     _z_axis.attach(SERVOPIN);         // z pin
     digitalWrite(MOTOR1CTLPIN, HIGH); // 开始控制电机1
