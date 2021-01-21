@@ -7,23 +7,17 @@
 #include <sys/io.h>
 #include <wiringSerial.h>
 #include <wiringPi.h>
-#include <Servo.h>
+#include <softPwm.h>
 #endif
 
-#define X_MAX 100       // 每行多少方格
-#define Y_MAX 10        // 多少行
 #define MOTOR1CTLPIN 8  // 电机1的控制引脚
 #define MOTOR1STEPPIN 2 // 电机1 _step
 #define MOTOR1DIRPIN 5  // 电机1转动方向
 #define MOTOR2CTLPIN 9  // 电机2的控制引脚
 #define MOTOR2STEPPIN 3 // 电机2 _step
 #define MOTOR2DIRPIN 6  // 电机2转动方向
-#define SERVOPIN 4      // 电机2转动方向
-#define SERVOVALUE 25   // 舵机每次转过的的角度，此数值涉及打洞的深度
-
-#ifdef __linux
-Servo _z_axis; // 创建一个舵机控制对象
-#endif
+#define SERVOPIN 0      // 舵机控制引脚，需要pwm功能
+#define RANGE 200       // 舵机的角度范围
 
 const int _step = 250; // _step Length
 int _x_pos, _y_pos;    // 打印针头当前位置
@@ -33,15 +27,15 @@ int _x_pos, _y_pos;    // 打印针头当前位置
 void holing()
 {
     char pos;
-    for (pos = 0; pos < 25; pos += 1) // 从0度到180度运动
-    {                                 // 每次步进一度
-        _z_axis.write(pos);
-        delay(5);
+    for (pos = 10; pos < RANGE; pos += 10)  // 从0度到180度运动
+    {                                       // 每次步进一度
+        softPwmWrite(SERVOPIN, pos);
+        delay(50);
     }
-    for (pos = 25; pos >= 1; pos -= 1) //从180度到0度运动
+    for (pos = RANGE; pos >= 10; pos -= 10) //从180度到0度运动
     {
-        _z_axis.write(pos);
-        delay(5);
+        softPwmWrite(SERVOPIN, pos);
+        delay(50);
     }
 }
 //控制电机行走，需要根据硬件修改
@@ -121,25 +115,25 @@ void printchar(char c[])
 {
     if (c[0] == 1)
         holing();
-    y_step_forward(_step);
+    y_Step_forward(_step);
     if (c[1] == 1)
         holing();
-    y_step_forward(_step);
+    y_Step_forward(_step);
     if (c[2] == 1)
         holing();
-    x_step_forward(_step);
-    y_step_backward(_step * 2);
+    x_Step_forward(_step);
+    y_Step_backward(_step * 2);
     _x_pos++;
     if (c[3] == 1)
         holing();
-    y_step_forward(_step);
+    y_Step_forward(_step);
     if (c[4] == 1)
         holing();
-    y_step_forward(_step);
+    y_Step_forward(_step);
     if (c[5] == 1)
         holing();
-    x_step_forward(_step);
-    y_step_backward(_step * 2);
+    x_Step_forward(_step);
+    y_Step_backward(_step * 2);
     _x_pos++;
 }
 
@@ -174,11 +168,12 @@ int main(int argc, char *argv[])
     pinMode(MOTOR2CTLPIN, OUTPUT);  // 电机2的控制引脚
     pinMode(MOTOR2STEPPIN, OUTPUT); // 电机2 _step
     pinMode(MOTOR2DIRPIN, OUTPUT);  // 电机2转动方向
-    //舵机初始化
-    _z_axis.attach(SERVOPIN);         // z pin
+
     digitalWrite(MOTOR1CTLPIN, HIGH); // 开始控制电机1
     digitalWrite(MOTOR2CTLPIN, HIGH); // 开始控制电机2
-    _z_axis.write(0);                 // 开始控制舵机，初始化位置归零
+    //舵机机的初始化
+    softPwmCreate(SERVOPIN, 10, RANGE); //创建一个使舵机转到90的pwm输出信号
+    softPwmWrite(SERVOPIN, 10);
 #endif
     while (!feof(fp))
     {
@@ -199,7 +194,6 @@ int main(int argc, char *argv[])
 #ifdef __linux
     digitalWrite(MOTOR1CTLPIN, LOW); // 停止控制电机1
     digitalWrite(MOTOR2CTLPIN, LOW); // 停止控制电机2
-    _z_axis.write(0);                // 舵机位置归零
 #endif
     return 0;
 }
