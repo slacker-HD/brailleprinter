@@ -10,33 +10,26 @@
 #include <softPwm.h>
 #endif
 
+// pin的引脚均采用wiringPi方式定义
 #define MOTOR1CTLPIN 8  // 电机1的控制引脚
 #define MOTOR1STEPPIN 2 // 电机1 _step
 #define MOTOR1DIRPIN 5  // 电机1转动方向
 #define MOTOR2CTLPIN 9  // 电机2的控制引脚
 #define MOTOR2STEPPIN 3 // 电机2 _step
 #define MOTOR2DIRPIN 6  // 电机2转动方向
-#define SERVOPIN 0      // 舵机控制引脚，需要pwm功能
-#define RANGE 200       // 舵机的角度范围
-
-const int _step = 250; // _step Length
-int _x_pos, _y_pos;    // 打印针头当前位置
+#define SERVOPIN 0      // 舵机控制引脚，树莓派的任何一个GPIO引脚都可以被设置成软件PWM的输出引脚
+#define RANGE 100       // PWM输出的每一个“周期”都需要10毫秒，默认范围值为100，因此，尝试每秒改变PWM值超过100次将是徒劳的。
+const int _step = 250;  // _step Length
+int _x_pos, _y_pos;     // 打印针头当前位置，_x_pos记录在那一列，用于最终的回正，_y_pos其实无用
 
 #ifdef __linux
 //控制舵机来回一次
 void holing()
 {
-    char pos;
-    for (pos = 10; pos < RANGE; pos += 10)  // 从0度到180度运动
-    {                                       // 每次步进一度
-        softPwmWrite(SERVOPIN, pos);
-        delay(50);
-    }
-    for (pos = RANGE; pos >= 10; pos -= 10) //从180度到0度运动
-    {
-        softPwmWrite(SERVOPIN, pos);
-        delay(50);
-    }
+    softPwmWrite(SERVOPIN, 50); //再次复写pwm输出
+    delay(300);
+    softPwmWrite(SERVOPIN, 5); //将pwm输出复写为使舵机转到初始位置
+    delay(300);
 }
 //控制电机行走，需要根据硬件修改
 void xStep_forward(int Step)
@@ -136,7 +129,6 @@ void printchar(char c[])
     y_Step_backward(_step * 2);
     _x_pos++;
 }
-
 #endif
 
 int main(int argc, char *argv[])
@@ -173,7 +165,7 @@ int main(int argc, char *argv[])
     digitalWrite(MOTOR2CTLPIN, HIGH); // 开始控制电机2
     //舵机机的初始化
     softPwmCreate(SERVOPIN, 10, RANGE); //创建一个使舵机转到90的pwm输出信号
-    softPwmWrite(SERVOPIN, 10);
+    softPwmWrite(SERVOPIN, 5);          //将pwm输出复写为使舵机转到初始位置
 #endif
     while (!feof(fp))
     {
@@ -194,6 +186,7 @@ int main(int argc, char *argv[])
 #ifdef __linux
     digitalWrite(MOTOR1CTLPIN, LOW); // 停止控制电机1
     digitalWrite(MOTOR2CTLPIN, LOW); // 停止控制电机2
+    softPwmWrite(SERVOPIN, 5);       //将pwm输出复写为使舵机转到初始位置
 #endif
     return 0;
 }
