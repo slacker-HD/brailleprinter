@@ -9,7 +9,7 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "pack-mac": "electron-packager . --asar --asar-unpack=protocol-link.html --overwrite --platform=darwin --arch=x64 --icon=assets/app-icon/mac/app.icns --prune=true --out=out --osx-sign.identity='Developer ID Application: IMI' --extend-info=assets/mac/info.plist",
-    "pack-win": "electron-packager . brailleprinter --asar --asar-unpack=protocol-link.html --overwrite --platform=win32 --arch=ia32 --icon=assets/app-icon/win/app.ico --prune=true --out=out --version-string.CompanyName='IMI' --version-string.FileDescription='brailleprinter' --version-string.ProductName='brailleprinter'",
+    "pack-win": "electron-packager . brailleprinter --asar --asar-unpack=protocol-link.html --overwrite --platform=win32 --arch=x64 --icon=assets/app-icon/win/app.ico --prune=true --out=out --version-string.CompanyName='IMI' --version-string.FileDescription='brailleprinter' --version-string.ProductName='brailleprinter'",
     "pack-linux": "electron-packager . --asar --asar-unpack=protocol-link.html --overwrite --platform=linux --arch=x64 --icon=assets/app-icon/png/64.png --prune=true --out=out",
     "pack-linuxarmv7": "electron-packager . --asar --asar-unpack=protocol-link.html --overwrite --platform=linux --arch=armv7l --icon=assets/app-icon/png/64.png --prune=true --out=out",
     "pack-linuxarm": "electron-packager . --asar --asar-unpack=protocol-link.html --overwrite --platform=linux --arch=arm --icon=assets/app-icon/png/64.png --prune=true --out=out",
