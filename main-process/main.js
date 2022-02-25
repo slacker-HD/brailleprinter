@@ -22,8 +22,8 @@ function initialize() {
     global.data = "";
     global.braille = [];
     //这里初始化设置默认打印行和列
-    global.row = 3;
-    global.col = 10;
+    global.row = 21;
+    global.col = 60;
     app.name = '布莱叶盲文打印编辑系统';
 
     function createWindow() {

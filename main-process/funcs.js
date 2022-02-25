@@ -150,7 +150,7 @@ var funcs = {
             }
             else {
                 //打完字空一个
-                currentcol += global.braille[i][global.data[i]].length * 2 + 1;
+                currentcol += global.braille[i][global.data[i]].length * 2 ;
             }
         }
         pagesepnums[pages - 1] = global.data.length;
@@ -171,7 +171,7 @@ var funcs = {
             }
             else {
                 //打完字空一个
-                currentcol += global.braille[i + start][global.data[i + start]].length * 2 + 1;
+                currentcol += global.braille[i + start][global.data[i + start]].length * 2 ;
             }
         }
         return rowsepnums;
