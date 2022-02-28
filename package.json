@@ -58,8 +58,10 @@
   "dependencies": {
     "electron-compile": "^6.4.4",
     "electron-packager": "^15.2.0",
+    "electron-rebuild": "^3.2.7",
     "electron-squirrel-startup": "^1.0.0",
-    "glob": "^7.1.6"
+    "glob": "^7.1.6",
+    "serialport": "^10.3.0"
   },
   "devDependencies": {
     "babel-plugin-transform-async-to-generator": "^6.24.1",

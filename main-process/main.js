@@ -10,6 +10,7 @@ const funcs = require('./funcs');
 const pinyin_dict_withtone = require('./dict/pinyin_dict_withtone');
 const os = require('os');
 const fs = require('fs');
+const serialport = require("serialport").SerialPort;
 
 const {
     execFile
