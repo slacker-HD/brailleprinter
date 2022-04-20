@@ -8,7 +8,7 @@
   "scripts": {
     "start": "electron-forge start",
     "rebuild-win": ".\\node_modules\\.bin\\electron-rebuild.cmd",
-    "rebuild-mac":"./node_modules/.bin/electron-rebuild",
+    "rebuild-mac": "./node_modules/.bin/electron-rebuild",
     "package": "electron-forge package",
     "pack-mac": "electron-packager . --asar --asar-unpack=protocol-link.html --overwrite --platform=darwin --arch=x64 --icon=assets/app-icon/mac/app.icns --prune=true --out=out --osx-sign.identity='Developer ID Application: IMI' --extend-info=assets/mac/info.plist",
     "pack-win": "electron-packager . brailleprinter --asar --asar-unpack=protocol-link.html --overwrite --platform=win32 --arch=x64 --icon=assets/app-icon/win/app.ico --prune=true --out=out --version-string.CompanyName='IMI' --version-string.FileDescription='brailleprinter' --version-string.ProductName='brailleprinter'",
@@ -75,6 +75,6 @@
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.29.2",
-    "serialport": "^10.3.0"
+    "serialport": "^10.4.0"
   }
 }

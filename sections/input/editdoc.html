@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <template class="task-template">
   <section id="editdoc-section" class="section js-section u-category-input">
@@ -45,14 +44,51 @@
             <div class="counter" color="hsl(116, 30%, 36%)"></div>
             <button data-tooltip="btnright" class="paginate right" id="btnright"><i></i><i></i></button>
           </div>
-          <div align="center">
+          <!-- <div align="center">
             <div class="rainbow-button-wrapper">
               <button id="startprint" class="about-button modal-hide">开始打印</button>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+
+    <div class="program">
+      <div class="program-wrapper">
+        <button class="js-container-target program-toggle-button">打印设置
+          <div class="program-meta u-avoid-clicks">请在下面的输入框中选择</div>
+        </button>
+        <div class="program-box">
+          <div class="program-controls">
+            <div class="center">
+              <table class="configtable">
+                <tr>
+                  <th>打印选项</th>
+                  <th>选择项</th>
+                  <th rowspan="3">
+                    <div class="rainbow-button-wrapper">
+                      <button id="startprint" class="about-button modal-hide">开始打印</button>
+                    </div>
+                  </th>
+                </tr>
+                <tr>
+                  <td>打印机端口</td>
+                  <td>
+                    <select class="program-select" id="portsetting" name="producttype">
+                      <option value="COM1" selected="selected">COM1</option>
+                      <option value="COM2">COM2</option>
+                    </select>
+                  </td>
+
+                </tr>
+              </table>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+
     <script type="text/javascript">
       require('./renderer-process/input/editdoc')
     </script>

@@ -23,7 +23,7 @@ function initialize() {
     global.data = "";
     global.braille = [];
     //这里初始化设置默认打印行和列
-    global.row = 21;
+    global.row = 27;
     global.col = 60;
     app.name = '布莱叶盲文打印编辑系统';
 
@@ -196,4 +196,34 @@ ipc.on('asynchronous-generateprinttxt', function (event, arg) {
     // WritePrintFile("a.txt", content);
     WritePrintFile(filepath, content);
     Print(filepath);
+});
+
+ipc.on('asynchronous-getPorts', function (event, arg) {
+    var AviablePorts = new Array;
+    serialport.list().then(
+        ports => {
+            ports.forEach(function (port) {
+                AviablePorts[AviablePorts.length] = port.path;
+            })
+            event.sender.send('asynchronous-getPorts-reply', AviablePorts);
+        }
+    )
+});
+
+ipc.on('asynchronous-print', function (event, arg) {
+    try {
+        const SerialPrint = new serialport({ path: arg, baudRate: 9600 });
+        SerialPrint.write("Hello World\n");
+        SerialPrint.on('data', function (data) {
+            console.log(data);
+            if(data.toString() == "Hello World\n\r\n")
+            {
+                SerialPrint.close();
+            }
+        });
+    } catch (error) {
+        return;
+    }
+
+
 });
