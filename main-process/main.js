@@ -11,13 +11,20 @@ const pinyin_dict_withtone = require('./dict/pinyin_dict_withtone');
 const os = require('os');
 const fs = require('fs');
 const serialport = require("serialport").SerialPort;
+var SerialPrint;
 
 const {
     execFile
 } = require('child_process');
 
-var mainWindow = null;
+var currentPos = 0; //记录文字的位置
+var gridFin = false;
+var letterPos = 0;//单双盲文位置
+const RETURNCODE_FIN = 0x46;
 
+
+var mainWindow = null;
+var isPrinter = false;
 function initialize() {
     pinyinUtil.parseDict(pinyin_dict_withtone);
     global.data = "";
@@ -25,6 +32,7 @@ function initialize() {
     //这里初始化设置默认打印行和列
     global.row = 27;
     global.col = 60;
+
     app.name = '布莱叶盲文打印编辑系统';
 
     function createWindow() {
@@ -51,7 +59,7 @@ function initialize() {
         mainWindow.on('closed', function () {
             mainWindow = null;
         });
-        mainWindow.webContents.openDevTools();
+        // mainWindow.webContents.openDevTools();
 
     }
 
@@ -73,6 +81,7 @@ function initialize() {
 
     app.on('quit', function () {
         console.log("quit");
+        SerialPrint.close();
     });
 }
 
@@ -210,20 +219,76 @@ ipc.on('asynchronous-getPorts', function (event, arg) {
     )
 });
 
-ipc.on('asynchronous-print', function (event, arg) {
-    try {
-        const SerialPrint = new serialport({ path: arg, baudRate: 9600 });
-        SerialPrint.write("Hello World\n");
-        SerialPrint.on('data', function (data) {
-            console.log(data);
-            if(data.toString() == "Hello World\n\r\n")
-            {
-                SerialPrint.close();
-            }
-        });
-    } catch (error) {
-        return;
+function PrintChar() {
+    var buf;
+    var temstr;
+
+    temstr = global.braille[currentPos][global.data[currentPos]][letterPos];
+    letterPos++;
+    if (letterPos > global.braille[currentPos][global.data[currentPos]].length - 1) {
+        letterPos = 0;
+        currentPos++;
     }
 
+    buf = Buffer.alloc(5);
+
+    buf.writeUInt8(0b00000000, 0);
+    buf.writeUInt8(0x42, 1);
+    buf.writeUInt8(0x86, 2);
+    buf.writeUInt8(0xdc, 3);
+
+    
+    buf.writeUInt8(0xff, 4);
+
+    console.log(temstr);
+
+    SerialPrint.write(buf);
+}
+
+function StartAndPrint(port) {
+
+    if (isPrinter !== true) {
+        SerialPrint = new serialport({ path: port, baudRate: 9600 });
+        SerialPrint.write("READY");
+    }
+    SerialPrint.on('data', function (data) {
+
+        console.log(data);
+        //握手成功
+        if (data.toString() == "READY") {
+            isPrinter = true;
+            currentPos = 0;
+            letterPos = 0;
+            if (global.data.length > 0) {
+                PrintChar();
+            }
+        }
+        // 返回完成，打印下一个
+        if (data[0] == RETURNCODE_FIN) {
+            if (currentPos == global.data.length) {
+                //打印完成，复原
+                currentPos = 0;
+                letterPos = 0;
+            }
+            else {
+                PrintChar();
+            }
+        }
+    });
+
+    SerialPrint.on('error', function (err) {
+        console.log('Error: ', err.message);
+    })
+}
+
+ipc.on('asynchronous-print', function (event, arg) {
+    if (isPrinter) {
+        if (global.data.length > 0) {
+            PrintChar(0, 0);
+        }
+    }
+    else {
+        StartAndPrint(arg);
+    }
 
 });
