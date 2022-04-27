@@ -13,7 +13,7 @@ var funcs = {
         var html = '';
         for (var i in obj) {
             if (i === "\n") {
-                continue;
+                html += "<br /><br /><br /><br />";
             } else {
                 var str = obj[i];
                 var line1 = "",
@@ -70,7 +70,7 @@ var funcs = {
         var txt = '';
         for (var i in obj) {
             if (i === "\n") {
-                continue;
+                html += "<br />";
             } else {
                 var str = obj[i];
                 var count = this.getattrCount(str);
@@ -130,9 +130,13 @@ var funcs = {
     Paging: function (rowlength, collength) {
         var pages = 1;//页数
         var pagesepnums = [];//分页的终点标识
+        global.Postion=[];
         var currentcol = 0, currentrow = 1;
         for (var i = 0; i < global.data.length; i++) {
             //判断是否该换行了
+            var Postion = new Object();
+
+
             if (currentcol + global.braille[i][global.data[i]].length * 2 > collength) {
                 currentrow++;
                 currentcol = 0;
@@ -147,11 +151,17 @@ var funcs = {
             if (global.data[i] === '\n') {
                 //一行最后一个回车注意不要多次换行
                 currentcol = currentcol === 0 ? 0 : collength;
+                currentrow++;
+                currentcol = 0;
             }
             else {
                 //打完字空一个
-                currentcol += global.braille[i][global.data[i]].length * 2 ;
+                currentcol += global.braille[i][global.data[i]].length * 2;
             }
+
+            Postion.col = currentcol/2;
+            Postion.row = currentrow;
+            global.Postion[i] = Postion;
         }
         pagesepnums[pages - 1] = global.data.length;
         return [pages, pagesepnums];
@@ -171,11 +181,55 @@ var funcs = {
             }
             else {
                 //打完字空一个
-                currentcol += global.braille[i + start][global.data[i + start]].length * 2 ;
+                currentcol += global.braille[i + start][global.data[i + start]].length * 2;
             }
         }
         return rowsepnums;
     }
-
 };
 module.exports = funcs;
+
+
+
+
+
+// gettcol: function (index) {
+//     var textcol = 0;
+//     for (var i = 0; i < global.rows.length; i++) {
+//         if (index > global.rows[i]) {
+//             textcol = index - global.rows[i];
+
+// //                 //再次循环找对应的列
+// //                 for (var j = global.braille.)
+
+// // //逻辑有问题，应该是累加然后判断
+// //                 break;
+//         }
+//     }
+
+
+
+//     return 0;
+// },
+// //有逻辑bug，这是文字的行
+// gettextrow: function (index) {
+//     for (var i = 0; i < global.rows.length; i++) {
+//         if (index > global.rows[i]) {
+//             return index - global.rows[i];
+//         }
+//     }
+//     return 0;
+// },
+// PrintCode: function (index) {
+//     var tmp;
+//     var buf = Buffer.alloc(5);
+//     buf.writeUInt8(0b00000000, 0);
+
+//     var row = this.getrow(index);
+//     tmp = 0b01000000 | row;
+//     buf.writeUInt8(tmp, 1);
+
+//     var col = this.getrcol(index);
+//     tmp = 0b01000000 | col;
+//     buf.writeUInt8(tmp, 2);
+// }

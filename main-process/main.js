@@ -18,8 +18,10 @@ const {
 } = require('child_process');
 
 var currentPos = 0; //记录文字的位置
-var gridFin = false;
 var letterPos = 0;//单双盲文位置
+var currentRow = 0;//当前行
+var currentCol = 0;//当前列
+
 const RETURNCODE_FIN = 0x46;
 
 
@@ -29,9 +31,11 @@ function initialize() {
     pinyinUtil.parseDict(pinyin_dict_withtone);
     global.data = "";
     global.braille = [];
+    global.Postion = [];
+
     //这里初始化设置默认打印行和列
     global.row = 27;
-    global.col = 60;
+    global.col = 60;//列要除以2
 
     app.name = '布莱叶盲文打印编辑系统';
 
@@ -81,7 +85,11 @@ function initialize() {
 
     app.on('quit', function () {
         console.log("quit");
-        SerialPrint.close();
+        try {
+            SerialPrint.close();
+        } catch (error) {
+            console.log(error);
+        }
     });
 }
 
@@ -120,6 +128,7 @@ ipc.on('asynchronous-inittxtedit', function () {
     var tmp = funcs.Paging(global.row, global.col);
     global.pages = tmp[0];
     global.pagesepnums = tmp[1];
+    funcs.PrintCode(0);
 });
 
 //传入参数arg为当前页面，一个int值
@@ -165,32 +174,32 @@ ipc.on('synchronous-gettooltips', function (event, arg) {
     event.returnValue = html;
 });
 
-function WritePrintFile(Filename, Content) {
-    fs.writeFileSync(Filename, Content, function (err) {
-        if (err) {
-            return -1;
-        }
-        console.log("The file was saved!");
-        return 0;
-    });
-}
+// function WritePrintFile(Filename, Content) {
+//     fs.writeFileSync(Filename, Content, function (err) {
+//         if (err) {
+//             return -1;
+//         }
+//         console.log("The file was saved!");
+//         return 0;
+//     });
+// }
 
-function Print(file) {
-    var exef;
-    if (fs.existsSync("./assets/a.out")) {
-        exef = "./assets/a.out";
+// function Print(file) {
+//     var exef;
+//     if (fs.existsSync("./assets/a.out")) {
+//         exef = "./assets/a.out";
 
-    }
-    else {
-        exef = global.data.apppath + "/../a.out";
-    }
-    const print = execFile(exef, [file,], (error, stdout) => {
-        console.log(stdout);
-    });
-    print.on('exit', (code) => {
-        console.log("exit:" + code);
-    });
-}
+//     }
+//     else {
+//         exef = global.data.apppath + "/../a.out";
+//     }
+//     const print = execFile(exef, [file,], (error, stdout) => {
+//         console.log(stdout);
+//     });
+//     print.on('exit', (code) => {
+//         console.log("exit:" + code);
+//     });
+// }
 
 //生成打印文件，传入当前页面，从0开始
 ipc.on('asynchronous-generateprinttxt', function (event, arg) {
@@ -223,12 +232,22 @@ function PrintChar() {
     var buf;
     var temstr;
 
+
     temstr = global.braille[currentPos][global.data[currentPos]][letterPos];
     letterPos++;
+
+    //需要判断当前行和列
+
+
     if (letterPos > global.braille[currentPos][global.data[currentPos]].length - 1) {
         letterPos = 0;
         currentPos++;
     }
+
+
+
+
+
 
     buf = Buffer.alloc(5);
 
@@ -237,7 +256,6 @@ function PrintChar() {
     buf.writeUInt8(0x86, 2);
     buf.writeUInt8(0xdc, 3);
 
-    
     buf.writeUInt8(0xff, 4);
 
     console.log(temstr);
@@ -259,6 +277,8 @@ function StartAndPrint(port) {
             isPrinter = true;
             currentPos = 0;
             letterPos = 0;
+            currentRow = 0;
+            currentCol = 0;
             if (global.data.length > 0) {
                 PrintChar();
             }
@@ -269,6 +289,8 @@ function StartAndPrint(port) {
                 //打印完成，复原
                 currentPos = 0;
                 letterPos = 0;
+                currentRow = 0;
+                currentCol = 0;
             }
             else {
                 PrintChar();
@@ -284,7 +306,7 @@ function StartAndPrint(port) {
 ipc.on('asynchronous-print', function (event, arg) {
     if (isPrinter) {
         if (global.data.length > 0) {
-            PrintChar(0, 0);
+            PrintChar();
         }
     }
     else {
