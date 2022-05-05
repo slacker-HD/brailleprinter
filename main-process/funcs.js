@@ -13,7 +13,7 @@ var funcs = {
         var html = '';
         for (var i in obj) {
             if (i === "\n") {
-                html += "<br /><br /><br /><br />";
+                html += "<br /><br />";
             } else {
                 var str = obj[i];
                 var line1 = "",
@@ -130,27 +130,30 @@ var funcs = {
     Paging: function (rowlength, collength) {
         var pages = 1;//页数
         var pagesepnums = [];//分页的终点标识
-        global.Postion=[];
+        global.Postion = [];
         var currentcol = 0, currentrow = 1;
         for (var i = 0; i < global.data.length; i++) {
-            //判断是否该换行了
+
             var Postion = new Object();
 
+            //判断是否该分页了
+            if (currentrow === rowlength) {
+                pages++;
+                //记录当业最后一个字符位置
+                pagesepnums[pagesepnums.length] = i - 1;
+                //重置新页
+                currentrow = 1;
+            }
 
+            //判断是否该换行了
             if (currentcol + global.braille[i][global.data[i]].length * 2 > collength) {
                 currentrow++;
                 currentcol = 0;
-                //判断是否该分页了
-                if (currentrow > rowlength) {
-                    pages++;
-                    pagesepnums[pagesepnums.length] = i;
-                    //重置新页
-                    currentrow = 1;
-                }
             }
+
             if (global.data[i] === '\n') {
                 //一行最后一个回车注意不要多次换行
-                currentcol = currentcol === 0 ? 0 : collength;
+                // currentcol = currentcol === 0 ? 0 : collength;
                 currentrow++;
                 currentcol = 0;
             }
@@ -159,7 +162,7 @@ var funcs = {
                 currentcol += global.braille[i][global.data[i]].length * 2;
             }
 
-            Postion.col = currentcol/2;
+            Postion.col = currentcol / 2;
             Postion.row = currentrow;
             global.Postion[i] = Postion;
         }

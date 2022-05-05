@@ -16,12 +16,10 @@ var SerialPrint;
 const {
     execFile
 } = require('child_process');
+const { connected } = require('process');
 
 var currentPos = 0; //记录文字的位置
-var letterPos = 0;//单双盲文位置
-var currentRow = 0;//当前行
-var currentCol = 0;//当前列
-
+var letterPos = 0;//记录双字节的位置，0，1
 const RETURNCODE_FIN = 0x46;
 
 
@@ -228,38 +226,100 @@ ipc.on('asynchronous-getPorts', function (event, arg) {
     )
 });
 
-function PrintChar() {
+function retCode() {
+    //打到最后一个字符了
+    if (currentPos == global.data.length - 1) {
+        return 0xFD;
+    }
+    //打印完一页，由于最后一个字符在前面被删除了，安全+1
+    else if (global.pagesepnums.indexOf(currentPos)) {
+        return 0xFC;
+    }
+    //继续打印
+    else {
+        return 0xFF;
+    }
+}
+
+function PrintCode(row, col, chars, ret) {
     var buf;
-    var temstr;
+    var temp;
+    buf = Buffer.alloc(5);
+    buf.writeUInt8(0b00000000, 0);
 
+    temp = row | 0b01000000;
+    buf.writeUInt8(temp, 1);
 
-    temstr = global.braille[currentPos][global.data[currentPos]][letterPos];
-    letterPos++;
+    temp = col | 0b10000000;
+    buf.writeUInt8(temp, 2);
 
-    //需要判断当前行和列
+    temp = 0b11000000;
+    for (var i = 0; i < chars.length; i++) {
+        switch (chars[i]) {
+            case "1":
+                temp = temp | 0b00100000;
+                break;
+            case "2":
+                temp = temp | 0b00010000;
+                break;
+            case "3":
+                temp = temp | 0b00001000;
+                break;
+            case "4":
+                temp = temp | 0b00000100;
+                break;
+            case "5":
+                temp = temp | 0b00000010;
+                break;
+            case "6":
+                temp = temp | 0b00000001;
+                break;
+            default:
+                break;
+        }
+    }
+    buf.writeUInt8(temp, 3);
+    buf.writeUInt8(ret, 4);
+    return buf;
+}
 
+function PrintChar() {
 
-    if (letterPos > global.braille[currentPos][global.data[currentPos]].length - 1) {
+    var buf;
+
+    //说明打完了
+    if (currentPos == global.data.length) {
+        //打印完成，复原
+        currentPos = 0;
         letterPos = 0;
+        return;
+    }
+
+    //回车字符略过
+    while (global.Postion[currentPos].col == 0 && currentPos < global.data.length) {
         currentPos++;
     }
 
-
-
-
-
-
-    buf = Buffer.alloc(5);
-
-    buf.writeUInt8(0b00000000, 0);
-    buf.writeUInt8(0x42, 1);
-    buf.writeUInt8(0x86, 2);
-    buf.writeUInt8(0xdc, 3);
-
-    buf.writeUInt8(0xff, 4);
-
-    console.log(temstr);
-
+    //多字节
+    if (global.braille[currentPos][global.data[currentPos]].length == 2) {
+        //打印第一个字节
+        if (letterPos == 0) {
+            //因为是上半个字节，所以控制字符一定是0xFF
+            buf = PrintCode(global.Postion[currentPos].row - 1, global.Postion[currentPos].col - 1, global.braille[currentPos][global.data[currentPos]][0], 0xFF);
+            letterPos = 1;
+        }
+        //打印第二个字节
+        else {
+            buf = PrintCode(global.Postion[currentPos].row - 1, global.Postion[currentPos].col - 1, global.braille[currentPos][global.data[currentPos]][1], retCode());
+            letterPos = 0;
+            currentPos++;
+        }
+    }
+    //单字节
+    else {
+        buf = PrintCode(global.Postion[currentPos].row - 1, global.Postion[currentPos].col - 1, global.braille[currentPos][global.data[currentPos]][0], retCode());
+        currentPos++;
+    }
     SerialPrint.write(buf);
 }
 
@@ -277,24 +337,13 @@ function StartAndPrint(port) {
             isPrinter = true;
             currentPos = 0;
             letterPos = 0;
-            currentRow = 0;
-            currentCol = 0;
             if (global.data.length > 0) {
                 PrintChar();
             }
         }
         // 返回完成，打印下一个
         if (data[0] == RETURNCODE_FIN) {
-            if (currentPos == global.data.length) {
-                //打印完成，复原
-                currentPos = 0;
-                letterPos = 0;
-                currentRow = 0;
-                currentCol = 0;
-            }
-            else {
-                PrintChar();
-            }
+            PrintChar();
         }
     });
 
@@ -312,5 +361,4 @@ ipc.on('asynchronous-print', function (event, arg) {
     else {
         StartAndPrint(arg);
     }
-
 });
