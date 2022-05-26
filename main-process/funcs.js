@@ -136,8 +136,8 @@ var funcs = {
 
             var Postion = new Object();
 
-            //判断是否该分页了
-            if (currentrow === rowlength) {
+            //判断是否该分页了，因为行数是从1开始，所以要加1
+            if (currentrow === rowlength + 1) {
                 pages++;
                 //记录当业最后一个字符位置
                 pagesepnums[pagesepnums.length] = i - 1;

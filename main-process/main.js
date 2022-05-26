@@ -232,7 +232,7 @@ function retCode() {
         return 0xFD;
     }
     //打印完一页，由于最后一个字符在前面被删除了，安全+1
-    else if (global.pagesepnums.indexOf(currentPos)) {
+    else if (global.pagesepnums.indexOf(currentPos) != -1) {
         return 0xFC;
     }
     //继续打印
@@ -280,6 +280,7 @@ function PrintCode(row, col, chars, ret) {
     }
     buf.writeUInt8(temp, 3);
     buf.writeUInt8(ret, 4);
+    console.log(buf);
     return buf;
 }
 
@@ -295,9 +296,26 @@ function PrintChar() {
         return;
     }
 
-    //回车字符略过
+    //处理回车，一般的略过；分页行打一个空的归零；最后一个字符要打印空的归零
     while (global.Postion[currentPos].col == 0 && currentPos < global.data.length) {
-        currentPos++;
+        //最后一个字符
+        if (currentPos == global.data.length - 1) {
+            buf = PrintCode(0, 0, global.braille[currentPos][global.data[currentPos]][0], 0xFD);
+            SerialPrint.write(buf);
+            currentPos++;
+            return;
+        }
+        //分页
+        else if (global.pagesepnums.indexOf(currentPos) != -1) {
+            buf = PrintCode(0, 0, global.braille[currentPos][global.data[currentPos]][0], 0xFC);
+            SerialPrint.write(buf);
+            currentPos++;
+            return;
+        }
+
+        else {
+            currentPos++;
+        }
     }
 
     //多字节
