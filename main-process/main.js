@@ -323,7 +323,7 @@ function PrintChar() {
         //打印第一个字节
         if (letterPos == 0) {
             //因为是上半个字节，所以控制字符一定是0xFF
-            buf = PrintCode(global.Postion[currentPos].row - 1, global.Postion[currentPos].col - 1, global.braille[currentPos][global.data[currentPos]][0], 0xFF);
+            buf = PrintCode(global.Postion[currentPos].row - 1, global.Postion[currentPos].col - 2, global.braille[currentPos][global.data[currentPos]][0], 0xFF);
             letterPos = 1;
         }
         //打印第二个字节
